@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:email="http://www.mulesoft.org/schema/mule/email"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="2cccbb81-3f0b-40a1-bbb8-ab8c383d431a" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<email:imap-config name="Email_IMAP" doc:name="Email IMAP" doc:id="aa861d5d-e026-495f-aabc-71cec0c7d795" >
+		<email:imap-connection host="imap.gmail.com" user="prasadsurapu15@gmail.com" password="sitasagar99" >
+			<email:properties >
+				<email:property key="mail.imap.ssl.enable" value="true" />
+			</email:properties>
+		</email:imap-connection>
+	</email:imap-config>
+	<email:imap-config name="Email_IMAP1" doc:name="Email IMAP" doc:id="0244d18e-dbe5-4ff2-9e9b-b50b4189fb58" >
+		<email:imap-connection host="imap.gmail.com" user="prasadsurapu15@gmail.com" password="sitasagar99" />
+	</email:imap-config>
+	<flow name="imapFlow" doc:id="2d5fb8e0-ffd9-48b6-867d-dec30dcc2ee9" >
+		<email:listener-imap doc:name="On New Email - IMAP" doc:id="c7515ef1-9842-470c-a0be-1f7ba13b2946" config-ref="Email_IMAP1" watermarkEnabled="false">
+			<scheduling-strategy >
+				<fixed-frequency frequency="3" timeUnit="SECONDS" />
+			</scheduling-strategy>
+			<email:imap-matcher seen="EXCLUDE" answered="EXCLUDE" deleted="EXCLUDE" />
+		</email:listener-imap>
+		<set-variable value="1" doc:name="Set Variable" doc:id="7f37e7f9-7151-4a59-b632-d28abdd8a6ec" variableName="a"/>
+		<ee:transform doc:name="Transform Message" doc:id="2fd0e51e-f0eb-48bc-9303-89333c88bb61" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="2f832320-de55-4b83-bb64-2f31a1c5ff61" message="prasad"/>
+	</flow>
+</mule>
